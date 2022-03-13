@@ -17,17 +17,23 @@ export default NextAuth({
         })
     ],
     callbacks: {
-        async signIn({ user, account, profile }) {
-            const { email } = user;
+        async signIn(params) {
+            try {
+                const { user, account, profile, email, credentials } = params;
+                console.log(user, account, profile, email, credentials);
 
-            await fauna.query(
-                query.Create(
-                    query.Collection('users'),
-                    { data: email }
-                )
-            )
+                const resultado_banco = await fauna.query(
+                    query.Create(
+                        query.Collection('users'),
+                        { data: email }
+                    )
+                );
 
-            return true;
-        }
+                console.log(resultado_banco)
+                return true
+            } catch (error) {
+                console.log("Ocorreu um erro:\n", error)
+            }
+        },
     }
 });
