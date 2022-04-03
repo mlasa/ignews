@@ -19,12 +19,26 @@ export default NextAuth({
     callbacks: {
         async signIn({ user, account, profile, email, credentials }) {
             try {
-                console.log("Dados recebidos na função signIn: \n", user, account, profile, email, credentials);
-
                 await fauna.query(
-                    q.Create(
-                        q.Collection('users'),
-                        { data: { email } }
+                    q.If(
+                        q.Not(
+                            q.Exists(
+                                q.Match(
+                                    q.Index('find_user_by_email'),
+                                    q.Casefold(email)
+                                )
+                            )
+                        ),
+                        q.Create(
+                            q.Collection('users'),
+                            { data: { email } }
+                        ),
+                        q.Get(
+                            q.Match(
+                                q.Index('find_user_by_email'),
+                                q.Casefold(email)
+                            )
+                        )
                     )
                 );
 
