@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
-import { query } from 'faunadb';
+import { query as q } from 'faunadb';
 
 import { fauna } from '../../../services/fauna';
 
@@ -17,19 +17,17 @@ export default NextAuth({
         })
     ],
     callbacks: {
-        async signIn(params) {
+        async signIn({ user, account, profile, email, credentials }) {
             try {
-                const { user, account, profile, email, credentials } = params;
-                console.log(user, account, profile, email, credentials);
+                console.log("Dados recebidos na função signIn: \n", user, account, profile, email, credentials);
 
-                const resultado_banco = await fauna.query(
-                    query.Create(
-                        query.Collection('users'),
-                        { data: email }
+                await fauna.query(
+                    q.Create(
+                        q.Collection('users'),
+                        { data: { email } }
                     )
                 );
 
-                console.log(resultado_banco)
                 return true
             } catch (error) {
                 console.log("Ocorreu um erro:\n", error)
