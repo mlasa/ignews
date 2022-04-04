@@ -6,7 +6,6 @@ import { stripe } from "../../services/stripe";
 const subscribeStripe = async (request: NextApiRequest, response: NextApiResponse) => {
     if (request.method === "POST") {
         const session = await getSession({ req: request });
-        console.log('session: ', session);
 
         const stripeCustomer = await stripe.customers.create({
             email: session.user.email,
@@ -28,7 +27,7 @@ const subscribeStripe = async (request: NextApiRequest, response: NextApiRespons
             /* customer: {} */
         });
 
-        response.status(200).json({ sessionId: stripeCheckoutSession.id })
+        response.status(200).json({ sessionId: stripeCheckoutSession.id });
     } else {
         response.setHeader("Allow", "POST");
         response.status(405).end("Method not allowed")
