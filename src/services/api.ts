@@ -5,12 +5,12 @@ interface IApiProps {
 }
 
 
-export const api = ({ url, method, body }: IApiProps): Promise<Response> => {
+export const api = async ({ url, method, body }: IApiProps): Promise<Response> => {
 
     const requestConfig = { method };
 
     body &&
         Object.assign(requestConfig, { body })
 
-    return fetch(`http://localhost:3000/api${url}`, requestConfig);
+    return await fetch(`http://localhost:3000/api${url}`, requestConfig);
 }
